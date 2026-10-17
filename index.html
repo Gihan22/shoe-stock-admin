@@ -9,43 +9,63 @@
   </head>
   <body>
     <main class="app-shell">
-      <header>
-        <div>
-          <p class="eyebrow">INVENTORY CONTROL</p>
-          <h1>Shoe Stock</h1>
-          <p class="subtitle">Your first China shipment, organised by style and size.</p>
-        </div>
-        <div class="header-actions"><button id="edit-button" class="quiet-button" type="button">Edit inventory</button><button id="reset-button" class="quiet-button" type="button">Reset stock</button></div>
-      </header>
-
-      <section class="summary" aria-label="Stock summary">
-        <article><span>Total pairs</span><strong id="total-pairs">200</strong></article>
-        <article><span>Shoe designs</span><strong id="total-designs">10</strong></article>
-        <article><span>Most stocked size</span><strong id="top-size">42</strong></article>
+      <section id="login-screen" class="login-card" aria-labelledby="login-title">
+        <p class="eyebrow">SHOE STOCK</p>
+        <h1 id="login-title">Welcome back</h1>
+        <p class="subtitle">Sign in to see and update the shared inventory.</p>
+        <form id="login-form">
+          <label>Email address<input id="email" type="email" autocomplete="email" required /></label>
+          <label>Password<input id="password" type="password" autocomplete="current-password" required /></label>
+          <button class="primary-button" type="submit">Sign in</button>
+          <p id="login-message" class="form-message" aria-live="polite"></p>
+        </form>
       </section>
 
-      <section class="panel controls">
-        <label class="search-label">Search shoe code
-          <input id="search" type="search" placeholder="e.g. S779" autocomplete="off" />
-        </label>
-        <p id="search-result" aria-live="polite">Showing all 10 designs</p>
-      </section>
+      <section id="inventory-screen" hidden>
+        <header>
+          <div>
+            <p class="eyebrow">INVENTORY CONTROL</p>
+            <h1>Shoe Stock</h1>
+            <p class="subtitle">Shared stock by style and size.</p>
+          </div>
+          <div class="header-actions">
+            <span id="signed-in-as" class="signed-in-as"></span>
+            <button id="edit-button" class="quiet-button" type="button">Edit inventory</button>
+            <button id="reset-button" class="quiet-button" type="button">Reset stock</button>
+            <button id="sign-out-button" class="quiet-button" type="button">Sign out</button>
+          </div>
+        </header>
 
-      <section class="panel table-panel">
-        <div class="table-heading">
-          <div><p class="eyebrow">CURRENT INVENTORY</p><h2>Stock by size</h2></div>
-          <p>Choose the size sold, then use Checkout to reduce that size by one.</p>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Shoe</th><th>40</th><th>41</th><th>42</th><th>43</th><th>44</th><th>Total</th><th>Checkout</th></tr></thead>
-            <tbody id="inventory-table"></tbody>
-          </table>
-        </div>
-      </section>
+        <section class="summary" aria-label="Stock summary">
+          <article><span>Total pairs</span><strong id="total-pairs">—</strong></article>
+          <article><span>Shoe designs</span><strong id="total-designs">—</strong></article>
+          <article><span>Most stocked size</span><strong id="top-size">—</strong></article>
+        </section>
 
-      <p class="note">Choose a photo for each shoe code with the image button. Photos and stock changes are saved in this browser.</p>
+        <section class="panel controls">
+          <label class="search-label">Search shoe code
+            <input id="search" type="search" placeholder="e.g. S779" autocomplete="off" />
+          </label>
+          <p id="search-result" aria-live="polite">Loading shared inventory…</p>
+        </section>
+
+        <section class="panel table-panel">
+          <div class="table-heading">
+            <div><p class="eyebrow">CURRENT INVENTORY</p><h2>Stock by size</h2></div>
+            <p>Choose the size sold, then use Checkout to reduce that size by one.</p>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Shoe</th><th>40</th><th>41</th><th>42</th><th>43</th><th>44</th><th>Total</th><th>Checkout</th></tr></thead>
+              <tbody id="inventory-table"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <p class="note">Stock updates are shared with signed-in users. Shoe photos stay only in the browser where they were added.</p>
+      </section>
     </main>
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
   </body>
 </html>
+
