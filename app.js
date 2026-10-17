@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
-import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+import { getAuth, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import { getFirestore, doc, onSnapshot, runTransaction, serverTimestamp, setDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -149,6 +149,16 @@ document.querySelector('#edit-button').addEventListener('click', () => {
   render();
 });
 document.querySelector('#sign-out-button').addEventListener('click', () => signOut(auth));
+document.querySelector('#reset-password-button').addEventListener('click', async () => {
+  const email = document.querySelector('#email').value.trim();
+  if (!email) { setLoginMessage('Enter your email address first.'); return; }
+  try {
+    await sendPasswordResetEmail(auth, email);
+    setLoginMessage('Password reset email sent. Check your inbox.', true);
+  } catch {
+    setLoginMessage('Could not send a reset email. Check the address and try again.');
+  }
+});
 
 onAuthStateChanged(auth, (user) => {
   if (stopListening) { stopListening(); stopListening = null; }
