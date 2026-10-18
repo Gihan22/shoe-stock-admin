@@ -35,6 +35,8 @@ const search = document.querySelector('#search');
 const signedInAs = document.querySelector('#signed-in-as');
 
 function cloneInventory(items = originalInventory) { return items.map(([code, quantities]) => [code, [...quantities]]); }
+function toStoredItems(items) { return items.map(([code, quantities]) => ({ code, quantities: [...quantities] })); }
+function fromStoredItems(items) { return items.map((item) => Array.isArray(item) ? [item[0], [...item[1]] ] : [item.code, [...item.quantities]]); }
 function saveImages() { localStorage.setItem('shoe-stock-images', JSON.stringify(images)); }
 function setLoginMessage(message, success = false) { loginMessage.textContent = message; loginMessage.classList.toggle('success', success); }
 
@@ -61,20 +63,20 @@ function render() {
 
 async function ensureInventory(snapshot) {
   if (snapshot.exists()) {
-    inventory = cloneInventory(snapshot.data().items);
+    inventory = fromStoredItems(snapshot.data().items);
     render();
     return;
   }
-  await setDoc(stockRef, { items: cloneInventory(), updatedAt: serverTimestamp() });
+  await setDoc(stockRef, { items: toStoredItems(cloneInventory()), updatedAt: serverTimestamp() });
 }
 
 async function changeQuantity(row, col, change) {
   try {
     await runTransaction(db, async (transaction) => {
       const snapshot = await transaction.get(stockRef);
-      const next = snapshot.exists() ? cloneInventory(snapshot.data().items) : cloneInventory();
+      const next = snapshot.exists() ? fromStoredItems(snapshot.data().items) : cloneInventory();
       next[row][1][col] = Math.max(0, next[row][1][col] + change);
-      transaction.set(stockRef, { items: next, updatedAt: serverTimestamp() });
+      transaction.set(stockRef, { items: toStoredItems(next), updatedAt: serverTimestamp() });
     });
   } catch (error) {
     document.querySelector('#search-result').textContent = `Could not save: ${error.message}`;
@@ -141,7 +143,7 @@ table.addEventListener('click', (event) => {
 
 search.addEventListener('input', render);
 document.querySelector('#reset-button').addEventListener('click', () => {
-  if (confirm('Reset every shoe quantity to the first shipment numbers?')) setDoc(stockRef, { items: cloneInventory(), updatedAt: serverTimestamp() });
+  if (confirm('Reset every shoe quantity to the first shipment numbers?')) setDoc(stockRef, { items: toStoredItems(cloneInventory()), updatedAt: serverTimestamp() });
 });
 document.querySelector('#edit-button').addEventListener('click', () => {
   editMode = !editMode;
