@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js';
-import { getAuth, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+import { getAuth, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, updatePassword } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
 import { getFirestore, doc, onSnapshot, runTransaction, serverTimestamp, setDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 const firebaseConfig = {
@@ -149,6 +149,19 @@ document.querySelector('#edit-button').addEventListener('click', () => {
   render();
 });
 document.querySelector('#sign-out-button').addEventListener('click', () => signOut(auth));
+document.querySelector('#change-password-button').addEventListener('click', async () => {
+  const newPassword = prompt('Enter a new password (at least 8 characters).');
+  if (newPassword === null) return;
+  if (newPassword.length < 8) { alert('Please use at least 8 characters.'); return; }
+  const confirmation = prompt('Enter the new password again.');
+  if (newPassword !== confirmation) { alert('The passwords do not match.'); return; }
+  try {
+    await updatePassword(auth.currentUser, newPassword);
+    alert('Your password has been changed.');
+  } catch {
+    alert('Please sign out, sign in again, and then retry changing your password.');
+  }
+});
 document.querySelector('#reset-password-button').addEventListener('click', async () => {
   const email = document.querySelector('#email').value.trim();
   if (!email) { setLoginMessage('Enter your email address first.'); return; }
