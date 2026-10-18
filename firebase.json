@@ -1,0 +1,14 @@
+{
+  "auth": {
+    "authorizedDomains": [
+      "gihan22.github.io",
+      "shoe-stock-admin.zestyshell16.chatgpt.site"
+    ],
+    "providers": {
+      "emailPassword": true
+    }
+  },
+  "firestore": {
+    "rules": "firestore.rules"
+  }
+}
