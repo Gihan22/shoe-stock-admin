@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isInventoryUser() {
+      return request.auth != null
+        && request.auth.token.email in [
+          'agcchanuka@gmail.com',
+          'gprasanjith@gmail.com'
+        ];
+    }
+
+    match /{document=**} {
+      allow read, write: if isInventoryUser();
+    }
+  }
+}
