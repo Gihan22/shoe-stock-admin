@@ -1,104 +1,94 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#11433a" />
-    <title>Avelon Edge Shoe Stock</title>
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <main class="app-shell">
-      <section id="login-screen" class="login-card" aria-labelledby="login-title">
-        <p class="eyebrow">AVELON EDGE</p>
-        <h1 id="login-title">Shoe Stock</h1>
-        <p class="subtitle">Sign in to see and update the shared inventory.</p>
-        <form id="login-form">
-          <label>Email address<input id="email" type="email" autocomplete="email" required /></label>
-          <label>Password<input id="password" type="password" autocomplete="current-password" required /></label>
-          <button class="primary-button" type="submit">Sign in</button>
-          <button id="reset-password-button" class="link-button" type="button">Forgot password?</button>
-          <p id="login-message" class="form-message" aria-live="polite"></p>
-        </form>
-      </section>
-
-      <section id="inventory-screen" hidden>
-        <header>
-          <div>
-            <p class="eyebrow">AVELON EDGE</p>
-            <h1>Shoe Stock</h1>
-            <p class="subtitle">Shared stock by style and size.</p>
-          </div>
-          <div class="header-actions">
-            <span id="signed-in-as" class="signed-in-as"></span>
-            <button id="edit-button" class="quiet-button" type="button">Edit inventory</button>
-            <button id="change-password-button" class="quiet-button" type="button">Change password</button>
-            <button id="reset-button" class="quiet-button" type="button">Reset stock</button>
-            <button id="sign-out-button" class="quiet-button" type="button">Sign out</button>
-          </div>
-        </header>
-
-        <section class="summary" aria-label="Stock summary">
-          <article><span>Total pairs</span><strong id="total-pairs">—</strong></article>
-          <article><span>Shoe designs</span><strong id="total-designs">—</strong></article>
-          <article><span>Most stocked size</span><strong id="top-size">—</strong></article>
-        </section>
-
-        <section class="panel controls">
-          <label class="search-label">Search shoe code
-            <input id="search" type="search" placeholder="e.g. S779" autocomplete="off" />
-          </label>
-          <p id="search-result" aria-live="polite">Loading shared inventory…</p>
-        </section>
-
-        <form id="add-shoe-form" class="panel add-design" hidden>
-          <div class="add-design-heading">
-            <div><p class="eyebrow">EDIT INVENTORY</p><h2>Add shoe design</h2></div>
-            <p>Enter the shoe code and starting quantity for each size.</p>
-          </div>
-          <label>Shoe code<input id="new-shoe-code" type="text" placeholder="e.g. AE101" maxlength="40" required /></label>
-          <label>Size 40<input id="new-size-40" type="number" min="0" value="0" required /></label>
-          <label>Size 41<input id="new-size-41" type="number" min="0" value="0" required /></label>
-          <label>Size 42<input id="new-size-42" type="number" min="0" value="0" required /></label>
-          <label>Size 43<input id="new-size-43" type="number" min="0" value="0" required /></label>
-          <label>Size 44<input id="new-size-44" type="number" min="0" value="0" required /></label>
-          <label>Price (Rs.)<input id="new-shoe-price" type="number" min="0" step="0.01" value="0" required /></label>
-          <button class="primary-button" type="submit">Add shoe</button>
-        </form>
-
-        <section class="panel table-panel">
-          <div class="table-heading">
-            <div><p class="eyebrow">CURRENT INVENTORY</p><h2>Stock by size</h2></div>
-            <p>Choose the size sold, then use Checkout to reduce that size by one.</p>
-          </div>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Shoe</th><th>40</th><th>41</th><th>42</th><th>43</th><th>44</th><th>Price</th><th>Total</th><th>Checkout</th></tr></thead>
-              <tbody id="inventory-table"></tbody>
-            </table>
-          </div>
-        </section>
-
-        <section class="panel sales-panel">
-          <div class="table-heading"><div><p class="eyebrow">CHECKOUT HISTORY</p><h2>Recent sales</h2></div><p>Every checkout shows the sale price and payment method.</p></div>
-          <ul id="sales-list" class="sales-list"><li>No checkouts recorded yet.</li></ul>
-        </section>
-
-        <p class="note">Stock updates are shared with signed-in Avelon Edge users. Shoe photos stay only in the browser where they were added.</p>
-      </section>
-    </main>
-    <dialog id="checkout-dialog" class="checkout-dialog">
-      <form id="checkout-form" method="dialog">
-        <div class="dialog-heading"><div><p class="eyebrow">AVELON EDGE</p><h2>Checkout shoe</h2></div><button id="close-checkout-button" class="dialog-close" type="button" aria-label="Close">×</button></div>
-        <p id="checkout-code" class="checkout-code"></p>
-        <label>Size<select id="checkout-size" required></select></label>
-        <p class="checkout-price">Price: <strong id="checkout-price">Rs. 0.00</strong></p>
-        <label>Payment method<select id="payment-method" required><option value="COD">Cash on delivery (COD)</option><option value="Bank transfer">Bank transfer</option></select></label>
-        <p id="checkout-message" class="form-message" aria-live="polite"></p>
-        <div class="dialog-actions"><button id="cancel-checkout-button" class="quiet-button" type="button">Cancel</button><button class="primary-button" type="submit">Confirm checkout</button></div>
-      </form>
-    </dialog>
-    <script type="module" src="app.js"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#14382f">
+  <title>Avelon Edge · Stock & Sales</title>
+  <link rel="stylesheet" href="styles.css?v=3">
+</head>
+<body>
+<main class="app-shell">
+  <section id="login-screen" class="login-card" aria-labelledby="login-title">
+    <p class="eyebrow">AVELON EDGE</p><h1 id="login-title">Your shop,<br>in sync.</h1>
+    <p class="subtitle">Stock, photos and sales. One shared workspace for your team.</p>
+    <form id="login-form">
+      <label>Email address<input id="email" type="email" autocomplete="username" required></label>
+      <label>Password<input id="password" type="password" autocomplete="current-password" required></label>
+      <button class="primary-button" type="submit">Sign in</button>
+      <button id="reset-password-button" class="link-button" type="button">Forgot password?</button>
+      <p id="login-message" class="form-message" role="status"></p>
+    </form>
+  </section>
+  <section id="inventory-screen" hidden>
+    <header>
+      <div><p class="eyebrow">AVELON EDGE / SHOP MANAGER</p><h1>Stock & Sales</h1><p id="sync-state" class="sync-state" role="status">Connecting…</p></div>
+      <div class="header-actions"><span id="signed-in-as" class="signed-in-as"></span><button id="backup-button" class="quiet-button">Download backup</button><button id="change-password-button" class="quiet-button">Password</button><button id="sign-out-button" class="quiet-button">Sign out</button></div>
+    </header>
+    <div id="status-message" class="status-message" role="status" aria-live="polite">Loading shared inventory…</div>
+    <section class="summary" aria-label="Inventory summary">
+      <article><span>Pairs in stock</span><strong id="total-pairs">—</strong></article>
+      <article><span>Active designs</span><strong id="total-designs">—</strong></article>
+      <article><span>Stock at selling price</span><strong id="stock-value">—</strong></article>
+      <article><span>Designs with low sizes</span><strong id="low-stock-count">—</strong><small>Any size with 2 or fewer pairs</small></article>
+    </section>
+    <section class="panel">
+      <div class="table-heading">
+        <div><p class="eyebrow">YOUR COLLECTION</p><h2>Shoe inventory</h2></div>
+        <div class="row-actions"><button id="import-photos-button" class="quiet-button" hidden>Share photos from this browser</button><button id="add-design-button" class="primary-button" hidden>Add shoe</button><button id="edit-button" class="quiet-button">Edit inventory</button></div>
+      </div>
+      <div class="controls inventory-filters">
+        <label class="search-label">Search code<input id="search" type="search" placeholder="Find a shoe…" autocomplete="off"></label>
+        <label>Show<select id="stock-filter"><option value="active">Active inventory</option><option value="low">Low stock</option><option value="archived">Archived designs</option></select></label>
+        <p id="search-result"></p>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Shoe</th><th>40</th><th>41</th><th>42</th><th>43</th><th>44</th><th>Price</th><th>Pairs</th><th>Actions</th></tr></thead>
+        <tbody id="inventory-table"></tbody>
+      </table></div>
+      <p class="section-note">Edit to change codes, prices and stock. Archive to remove a design from sale; restore it anytime. Tap a photo to enlarge.</p>
+    </section>
+    <section class="panel sales-panel">
+      <div class="table-heading"><div><p class="eyebrow">ORDERS & PAYMENTS</p><h2>Recent sales</h2></div><button id="csv-button" class="quiet-button">Export all sales (CSV)</button></div>
+      <div class="controls"><p id="sales-summary">Loading orders…</p><label>Payment status<select id="sales-filter"><option value="all">All recent orders</option><option value="Pending">Pending payment</option><option value="Paid">Paid</option><option value="Unknown">Unknown (older orders)</option></select></label></div>
+      <ul id="sales-list" class="sales-list"></ul>
+      <p class="section-note">The latest 50 orders are shown. Export includes all orders. Payment method records the agreement; mark paid only when money is received.</p>
+    </section>
+    <p class="note">Shared cloud data for Gihan and Gayan · Download a backup regularly · Online connection required to save</p>
+  </section>
+</main>
+<dialog id="design-dialog" aria-labelledby="design-title"><form id="design-form">
+  <div class="dialog-heading"><h2 id="design-title">Shoe design</h2><button class="dialog-close" type="button" data-close aria-label="Close">×</button></div>
+  <label>Shoe code<input id="design-code" maxlength="40" required autocomplete="off"></label>
+  <label>Selling price (LKR)<input id="design-price" type="number" min="0" max="10000000" step="0.01" required></label>
+  <div id="starting-stock" class="size-grid"></div>
+  <p id="design-message" class="form-message" role="status"></p>
+  <div class="dialog-actions"><button class="quiet-button" type="button" data-close>Cancel</button><button class="primary-button" type="submit">Save design</button></div>
+</form></dialog>
+<dialog id="checkout-dialog" aria-labelledby="checkout-title"><form id="checkout-form">
+  <div class="dialog-heading"><div><p class="eyebrow">NEW ORDER</p><h2 id="checkout-title">Checkout</h2></div><button class="dialog-close" type="button" data-close aria-label="Close">×</button></div>
+  <strong id="checkout-code"></strong>
+  <div class="two-columns"><label>Size<select id="checkout-size" required></select></label><label>Pairs<input id="checkout-quantity" type="number" min="1" max="9999" value="1" step="1" required></label></div>
+  <p class="order-total">Order total <strong id="checkout-total"></strong></p>
+  <div class="two-columns"><label>Payment method<select id="payment-method"><option>COD</option><option>Bank transfer</option></select></label><label>Payment status<select id="payment-status"><option>Pending</option><option>Paid</option></select></label></div>
+  <label>Customer / reference (optional)<input id="customer" maxlength="100" placeholder="Name or order reference"></label>
+  <label>Notes (optional)<textarea id="order-note" maxlength="300" rows="2" placeholder="Delivery instructions or transfer reference"></textarea></label>
+  <p id="checkout-message" class="form-message" role="status"></p>
+  <div class="dialog-actions"><button type="button" class="quiet-button" data-close>Cancel</button><button type="submit" class="primary-button">Confirm order</button></div>
+</form></dialog>
+<dialog id="archive-dialog" aria-labelledby="archive-title"><div class="dialog-body">
+  <h2 id="archive-title">Archive shoe design</h2><p id="archive-text"></p>
+  <div class="dialog-actions"><button class="quiet-button" data-close>Keep design</button><button id="confirm-archive" class="primary-button">Archive</button></div>
+</div></dialog>
+<dialog id="photo-dialog" aria-label="Shoe photo"><button class="dialog-close" data-close aria-label="Close">×</button><img id="large-photo" alt=""></dialog>
+<dialog id="password-dialog" aria-labelledby="password-title"><form id="password-form">
+  <div class="dialog-heading"><h2 id="password-title">Change password</h2><button class="dialog-close" type="button" data-close aria-label="Close">×</button></div>
+  <label>Current password<input id="current-password" type="password" autocomplete="current-password" required></label>
+  <label>New password<input id="new-password" type="password" autocomplete="new-password" minlength="8" required></label>
+  <label>Repeat new password<input id="repeat-password" type="password" autocomplete="new-password" minlength="8" required></label>
+  <p id="password-message" class="form-message" role="status"></p>
+  <div class="dialog-actions"><button type="button" class="quiet-button" data-close>Cancel</button><button class="primary-button" type="submit">Update password</button></div>
+</form></dialog>
+<script type="module" src="app-v2.js?v=3"></script>
+</body>
 </html>
-
