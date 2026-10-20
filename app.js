@@ -33,6 +33,7 @@ const loginMessage = document.querySelector('#login-message');
 const table = document.querySelector('#inventory-table');
 const search = document.querySelector('#search');
 const signedInAs = document.querySelector('#signed-in-as');
+const addShoeForm = document.querySelector('#add-shoe-form');
 
 function cloneInventory(items = originalInventory) { return items.map(([code, quantities]) => [code, [...quantities]]); }
 function toStoredItems(items) { return items.map(([code, quantities]) => ({ code, quantities: [...quantities] })); }
@@ -51,7 +52,8 @@ function render() {
     const image = images[code] ? `<img src="${images[code]}" alt="${code} shoe" />` : 'PHOTO';
     const options = sizes.map((size, col) => `<option value="${col}" ${quantities[col] === 0 ? 'disabled' : ''}>${size} (${quantities[col]})</option>`).join('');
     const soldOut = quantities.every((quantity) => quantity === 0);
-    return `<tr><td><div class="shoe-cell"><span class="shoe-image">${image}</span><span>${code}</span>${editMode ? `<button class="image-button" type="button" data-image-code="${code}">Add image</button>` : ''}</div></td>${cells}<td>${quantities.reduce((a,b) => a + b, 0)}</td><td><div class="checkout-control"><select data-checkout-size="${row}" aria-label="Size for ${code}">${options}</select><button class="checkout-button" type="button" data-checkout-row="${row}" ${soldOut ? 'disabled' : ''}>Checkout</button></div></td></tr>`;
+    const editButtons = editMode ? `<button class="image-button" type="button" data-rename-row="${row}">Rename</button><button class="image-button" type="button" data-image-code="${code}">Add image</button>` : '';
+    return `<tr><td><div class="shoe-cell"><span class="shoe-image">${image}</span><span>${code}</span>${editButtons}</div></td>${cells}<td>${quantities.reduce((a,b) => a + b, 0)}</td><td><div class="checkout-control"><select data-checkout-size="${row}" aria-label="Size for ${code}">${options}</select><button class="checkout-button" type="button" data-checkout-row="${row}" ${soldOut ? 'disabled' : ''}>Checkout</button></div></td></tr>`;
   }).join('');
   document.querySelector('#search-result').textContent = `Showing ${visible.length} design${visible.length === 1 ? '' : 's'}`;
   const all = inventory.flatMap(([, quantities]) => quantities);
@@ -80,6 +82,48 @@ async function changeQuantity(row, col, change) {
     });
   } catch (error) {
     document.querySelector('#search-result').textContent = `Could not save: ${error.message}`;
+  }
+}
+
+async function renameShoeCode(row, nextCode) {
+  const code = nextCode.trim().toUpperCase();
+  if (!code) return;
+  const previousCode = inventory[row]?.[0];
+  try {
+    await runTransaction(db, async (transaction) => {
+      const snapshot = await transaction.get(stockRef);
+      const next = snapshot.exists() ? fromStoredItems(snapshot.data().items) : cloneInventory();
+      if (next.some(([itemCode], index) => index !== row && itemCode.toLowerCase() === code.toLowerCase())) throw new Error('That shoe code already exists.');
+      next[row][0] = code;
+      transaction.set(stockRef, { items: toStoredItems(next), updatedAt: serverTimestamp() });
+    });
+    if (previousCode && images[previousCode]) {
+      images[code] = images[previousCode];
+      delete images[previousCode];
+      saveImages();
+    }
+  } catch (error) {
+    document.querySelector('#search-result').textContent = error.message || 'Could not rename this shoe code.';
+  }
+}
+
+async function addShoe(code, quantities) {
+  const normalizedCode = code.trim().toUpperCase();
+  if (!normalizedCode || quantities.some((quantity) => !Number.isInteger(quantity) || quantity < 0)) {
+    document.querySelector('#search-result').textContent = 'Enter a shoe code and zero or more pairs for every size.';
+    return;
+  }
+  try {
+    await runTransaction(db, async (transaction) => {
+      const snapshot = await transaction.get(stockRef);
+      const next = snapshot.exists() ? fromStoredItems(snapshot.data().items) : cloneInventory();
+      if (next.some(([itemCode]) => itemCode.toLowerCase() === normalizedCode.toLowerCase())) throw new Error('That shoe code already exists.');
+      next.push([normalizedCode, quantities]);
+      transaction.set(stockRef, { items: toStoredItems(next), updatedAt: serverTimestamp() });
+    });
+    addShoeForm.reset();
+  } catch (error) {
+    document.querySelector('#search-result').textContent = error.message || 'Could not add this shoe design.';
   }
 }
 
@@ -131,6 +175,12 @@ loginForm.addEventListener('submit', async (event) => {
 table.addEventListener('click', (event) => {
   const button = event.target.closest('button');
   if (!button) return;
+  if (button.dataset.renameRow !== undefined) {
+    const row = Number(button.dataset.renameRow);
+    const nextCode = prompt('Enter the new shoe code.', inventory[row]?.[0] || '');
+    if (nextCode !== null) renameShoeCode(row, nextCode);
+    return;
+  }
   if (button.dataset.imageCode) { chooseImage(button.dataset.imageCode); return; }
   if (button.dataset.checkoutRow !== undefined) {
     const row = Number(button.dataset.checkoutRow);
@@ -142,12 +192,18 @@ table.addEventListener('click', (event) => {
 });
 
 search.addEventListener('input', render);
+addShoeForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const quantities = sizes.map((size) => Number(document.querySelector(`#new-size-${size}`).value));
+  addShoe(document.querySelector('#new-shoe-code').value, quantities);
+});
 document.querySelector('#reset-button').addEventListener('click', () => {
   if (confirm('Reset every shoe quantity to the first shipment numbers?')) setDoc(stockRef, { items: toStoredItems(cloneInventory()), updatedAt: serverTimestamp() });
 });
 document.querySelector('#edit-button').addEventListener('click', () => {
   editMode = !editMode;
   document.querySelector('#edit-button').textContent = editMode ? 'Done editing' : 'Edit inventory';
+  addShoeForm.hidden = !editMode;
   render();
 });
 document.querySelector('#sign-out-button').addEventListener('click', () => signOut(auth));
@@ -180,6 +236,7 @@ onAuthStateChanged(auth, (user) => {
   if (!user) {
     loginScreen.hidden = false;
     inventoryScreen.hidden = true;
+    addShoeForm.hidden = true;
     inventory = [];
     return;
   }
