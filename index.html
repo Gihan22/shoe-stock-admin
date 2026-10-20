@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#11433a" />
-    <title>Shoe Stock Admin</title>
+    <title>Avelon Edge Shoe Stock</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <main class="app-shell">
       <section id="login-screen" class="login-card" aria-labelledby="login-title">
-        <p class="eyebrow">SHOE STOCK</p>
-        <h1 id="login-title">Welcome back</h1>
+        <p class="eyebrow">AVELON EDGE</p>
+        <h1 id="login-title">Shoe Stock</h1>
         <p class="subtitle">Sign in to see and update the shared inventory.</p>
         <form id="login-form">
           <label>Email address<input id="email" type="email" autocomplete="email" required /></label>
@@ -25,7 +25,7 @@
       <section id="inventory-screen" hidden>
         <header>
           <div>
-            <p class="eyebrow">INVENTORY CONTROL</p>
+            <p class="eyebrow">AVELON EDGE</p>
             <h1>Shoe Stock</h1>
             <p class="subtitle">Shared stock by style and size.</p>
           </div>
@@ -51,6 +51,20 @@
           <p id="search-result" aria-live="polite">Loading shared inventory…</p>
         </section>
 
+        <form id="add-shoe-form" class="panel add-design" hidden>
+          <div class="add-design-heading">
+            <div><p class="eyebrow">EDIT INVENTORY</p><h2>Add shoe design</h2></div>
+            <p>Enter the shoe code and starting quantity for each size.</p>
+          </div>
+          <label>Shoe code<input id="new-shoe-code" type="text" placeholder="e.g. AE101" maxlength="40" required /></label>
+          <label>Size 40<input id="new-size-40" type="number" min="0" value="0" required /></label>
+          <label>Size 41<input id="new-size-41" type="number" min="0" value="0" required /></label>
+          <label>Size 42<input id="new-size-42" type="number" min="0" value="0" required /></label>
+          <label>Size 43<input id="new-size-43" type="number" min="0" value="0" required /></label>
+          <label>Size 44<input id="new-size-44" type="number" min="0" value="0" required /></label>
+          <button class="primary-button" type="submit">Add shoe</button>
+        </form>
+
         <section class="panel table-panel">
           <div class="table-heading">
             <div><p class="eyebrow">CURRENT INVENTORY</p><h2>Stock by size</h2></div>
@@ -64,7 +78,7 @@
           </div>
         </section>
 
-        <p class="note">Stock updates are shared with signed-in users. Shoe photos stay only in the browser where they were added.</p>
+        <p class="note">Stock updates are shared with signed-in Avelon Edge users. Shoe photos stay only in the browser where they were added.</p>
       </section>
     </main>
     <script type="module" src="app.js"></script>
